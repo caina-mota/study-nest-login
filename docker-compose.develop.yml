@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: develop.Dockerfile
+    container_name: container_auth
+    ports:
+      - "3001:3001"
+    networks:
+      - develop-network
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - mysql-auth
+    volumes:
+      - ".:/auth"
+      # - type: bind
+      #   source: ./.env-development
+      #   target: /auth/.env
+      # - type: bind
+      #   source: ./ormconfig-develop.json
+      #   target: /auth/ormconfig.json
+    tty: true
+
+  mysql-auth:
+    image: mysql:8
+    container_name: mysql-auth
+    ports:
+      - "3308:3306"
+    networks:
+      - develop-network
+    environment:
+      MYSQL_ROOT_PASSWORD: qpalzm
+      MYSQL_DATABASE: auth
+      MYSQL_USER: root
+      MYSQL_PASSWORD: qpalzm1234
+    restart: always
+
+networks:
+  develop-network:
+    name: develop_network
